@@ -30,13 +30,12 @@ RUN ["mvn", "--projects", "languagetool-standalone", "--also-make", "package", "
 
 RUN unzip /languagetool/languagetool-standalone/target/LanguageTool-${LANGUAGETOOL_VERSION}.zip -d /dist
 
-FROM openjdk:8-jre-alpine
+FROM arm64v8/openjdk:8-jre-slim-stretch
 
-RUN apk update \
-    && apk add \
+RUN apt-get update \
+    && apt-get install -y \
         bash \
-        libgomp \
-        gcompat
+        libgomp1
 
 ARG LANGUAGETOOL_VERSION
 
@@ -46,7 +45,7 @@ WORKDIR /LanguageTool-${LANGUAGETOOL_VERSION}
 
 RUN mkdir /nonexistent && touch /nonexistent/.languagetool.cfg
 
-RUN addgroup -S languagetool && adduser -S languagetool -G languagetool
+RUN adduser --system --group languagetool
 
 COPY --chown=languagetool start.sh start.sh
 
