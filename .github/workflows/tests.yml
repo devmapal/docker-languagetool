@@ -11,6 +11,20 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Download
-      run: docker build --target=build -t languagetool-build .
+      uses: uraimo/run-on-arch-action@v1.0.7
+      with:
+        architecture: aarch64
+        distribution: ubuntu18.04
+        run: |
+          apt-get update
+          apt-get install -y docker.io
+          docker build --target=build -t languagetool-build .
     - name: Run tests
-      run: docker run languagetool-build mvn clean test --quiet
+      uses: uraimo/run-on-arch-action@v1.0.7
+      with:
+        architecture: aarch64
+        distribution: ubuntu18.04
+        run: |
+          apt-get update
+          apt-get install -y docker.io
+          docker run languagetool-build mvn clean test --quiet
