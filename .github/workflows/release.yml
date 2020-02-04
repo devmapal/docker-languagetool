@@ -29,7 +29,7 @@ jobs:
           docker push $DOCKERHUB_REPOSITORY:$DOCKER_TAG
           docker push $DOCKERHUB_REPOSITORY:latest
         env:
-          DOCKERHUB_REPOSITORY: erikvl87/languagetool
+          DOCKERHUB_REPOSITORY: devmapal/languagetool
       - name: Push to GitHub
         run: |
           docker tag languagetool docker.pkg.github.com/${{ github.repository }}/languagetool:$DOCKER_TAG
