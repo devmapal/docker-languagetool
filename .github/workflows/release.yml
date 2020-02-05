@@ -13,15 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Tag
+        run: echo "::set-env name=DOCKER_TAG::$(echo ${{ github.ref }} | grep -oP '(?<=refs/tags/v).*')"
       - name: Download
         uses: uraimo/run-on-arch-action@v1.0.7
         with:
           architecture: aarch64
           distribution: ubuntu18.04
           run: |
+            echo "dockerhub repository: ${{ DOCKERHUB_REPOSITORY }}"
             apt-get update
             apt-get install -y docker.io
             docker build --target=build -t languagetool-build .
+          additionalArgs: "-e DOCKERHUB_REPOSITORY"
+        env:
+          DOCKERHUB_REPOSITORY: devmapal/languagetool
       - name: Test
         uses: uraimo/run-on-arch-action@v1.0.7
         with:
@@ -31,8 +37,6 @@ jobs:
             apt-get update
             apt-get install -y docker.io
             docker run languagetool-build mvn clean test --quiet
-      - name: Tag
-        run: echo "::set-env name=DOCKER_TAG::$(echo ${{ github.ref }} | grep -oP '(?<=refs/tags/v).*')"
       - name: Build
         uses: uraimo/run-on-arch-action@v1.0.7
         with:
